@@ -130,34 +130,34 @@ async function addRole(db) {
     });
 }
 
-// async function updateEmployeeRole(db) {
-//   let employeeData = await db.query(
-//     `SELECT id, CONCAT(first_name, " ", last_name) AS Employee FROM employee`
-//   );
-//   let roleData = await db.query(`SELECT id, title FROM role`);
-//   await inquirer
-//     .prompt([
-//       {
-//         name: "employee",
-//         type: "list",
-//         message: "Select EMPLOYEE to update:",
-//         choices: employeeData.map((x) => x.Employee),
-//       },
-//       {
-//         name: "role",
-//         type: "list",
-//         message: "Select ROLE to update to:",
-//         choices: roleData.map((x) => x.title),
-//       },
-//     ])
-//     .then(({ employee, role }) => {
-//       const employeeId = employeeData.find((x) => x.Employee === employee);
-//       const roleId = roleData.find((x) => x.title === role);
-//       db.query(
-//         `UPDATE employee SET role_id = ${roleId.id} WHERE id = ${employeeId.id}`
-//       );
-//     });
-// }
+async function updateEmployeeRole(db) {
+  let employeeData = await db.query(
+    `SELECT id, CONCAT(first_name, " ", last_name) AS Employee FROM employee`
+  );
+  let roleData = await db.query(`SELECT id, title FROM role`);
+  await inquirer
+    .prompt([
+      {
+        name: "employee",
+        type: "list",
+        message: "Select EMPLOYEE to update:",
+        choices: employeeData.map((x) => x.Employee),
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "Select ROLE to update to:",
+        choices: roleData.map((x) => x.title),
+      },
+    ])
+    .then(({ employee, role }) => {
+      const employeeId = employeeData.find((x) => x.Employee === employee);
+      const roleId = roleData.find((x) => x.title === role);
+      db.query(
+        `UPDATE employee SET role_id = ${roleId.id} WHERE id = ${employeeId.id}`
+      );
+    });
+}
 
 
 module.exports = { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept };

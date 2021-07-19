@@ -164,7 +164,22 @@ async function viewDept (db) {
   console.table(results);
 }
 
-
+async function addDept (db) {
+  await inquirer
+      .prompt(
+          {
+              name: 'department',
+              type: 'input',
+              message: 'Please enter the name of the new DEPARTMENT:',
+              validate: department => {
+                  return checkString(department)
+              }
+          }
+      )
+      .then(({ department }) => {
+          db.query(`INSERT INTO department (name) VALUES (?)`, [department])
+      })
+}
 
 
 

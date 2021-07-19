@@ -159,6 +159,15 @@ async function updateEmployeeRole(db) {
     });
 }
 
+async function viewDept (db) {
+  const results = await db.query('SELECT department.id AS ID, name AS Department FROM department');
+  console.table(results);
+}
+
+
+
+
+
 
 module.exports = { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept };
 

@@ -181,8 +181,5 @@ async function addDept (db) {
       })
 }
 
-
-
-
 module.exports = { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept };
 

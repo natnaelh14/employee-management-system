@@ -1,17 +1,10 @@
-const Database = require('../libs/Database')
 const { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept } = require('./questions');
 
 const inquirer = require('inquirer');
 const display = require('console.table');
 
-const main = async () => {
-    const db = new Database({
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME
-    })
+    async function optionList () {
 
-    for (; ;) {
         const { mainMenu } = await inquirer
             .prompt(
                 {
@@ -23,32 +16,30 @@ const main = async () => {
             );
         switch (mainMenu) {
             case 'View all employees':
-                await viewEmployees(db);
+                await viewEmployees();
                 break;
             case 'Add an employee':
-                await addEmployees(db);
+                await addEmployees();
                 break;
             case 'View all roles':
-                await viewRoles(db);
+                await viewRoles();
                 break;
             case 'Add a role':
-                await addRole(db);
+                await addRole();
                 break;
             case 'Update an employee role':
-                await updateEmployeeRole(db);
+                await updateEmployeeRole();
                 break;
             case 'View all departments':
-                await viewDept(db);
+                await viewDept();
                 break;
             case 'Add a department':
-                await addDept(db);
+                await addDept();
                 break;
             case 'Quit application':
-                console.log('Bye');
                 await db.close();
                 return;
         }
     }
-}
 
-module.exports = main;
+module.exports = optionList;

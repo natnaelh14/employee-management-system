@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const connection = require('../Database');
 
 const checkString = (input) => {
   if (input !== undefined && typeof input === "string") {
@@ -9,9 +10,11 @@ const checkString = (input) => {
   }
 };
 
-const viewEmployees = async (db) => {
-  const results = await db.query(`
-    SELECT employee.id AS ID,
+
+
+const viewEmployees = async () => {
+  console.log('Viewing employee by departments');
+  let sql = `SELECT employee.id AS ID,
     employee.first_name AS "First Name",
     employee.last_name AS "Last Name", 
     role.title AS "Job Title",
@@ -21,16 +24,44 @@ const viewEmployees = async (db) => {
     FROM employee INNER JOIN role ON role.id = employee.role_id 
     INNER JOIN department ON department.id = role.department_id
     LEFT JOIN employee e ON employee.manager_id = e.id
-    ORDER BY ID ASC`);
-  console.table(results);
+    ORDER BY ID ASC`;
+    connection.query(sql, (error, results, fields) => {
+      if (error) {
+        return console.error(error.message);
+      }
+      console.log(results);
+    });
 };
 
-async function addEmployees(db) {
-  let roleData = await db.query(`SELECT id, title FROM role`);
-  let managerData = await db.query(
-    `SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee`
-  );
+async function addEmployees() {
+  const selectRoleQuery = `SELECT id, title FROM role`;
+  const selectManagerDataQuery = `SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee`;
+
+  var roleData, managerData;
+
+  await connection.query(selectRoleQuery, (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    console.log(results);
+    roleData = results;
+  });
+
+  await connection.query(selectManagerDataQuery, (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    console.log(results);
+    managerData = results;
+  });
+  console.log(roleData);
+  console.log(managerData);
+  // let roleData = await connection.query(`SELECT id, title FROM role`);
+  // let managerData = await connection.query(
+  //   `SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee`
+  // );
   managerData.push({ id: managerData.length + 1, Manager: "None" });
+
   await inquirer
     .prompt([
       {
@@ -65,22 +96,34 @@ async function addEmployees(db) {
     .then(({ firstName, lastName, role, manager }) => {
       const roleId = roleData.find((x) => x.title === role);
       if (manager === "None") {
-        db.query(
-          `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
-          [firstName, lastName, roleId.id, null]
-        );
+        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${roleId.id},${null})`
+        connection.query(insertCommand, (error, results, fields) => {
+          if (error) {
+            return console.error(error.message);
+          }
+        });
+        // connection.query(
+        //   `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
+        //   [firstName, lastName, roleId.id, null]
+        // );
       } else {
         const managerId = managerData.find((x) => x.Manager === manager);
-        db.query(
-          `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
-          [firstName, lastName, roleId.id, managerId.id]
-        );
+        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${roleId.id},${managerId.id})`
+        connection.query(insertCommand, (error, results, fields) => {
+          if (error) {
+            return console.error(error.message);
+          }
+        });
+        // connection.query(
+        //   `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
+        //   [firstName, lastName, roleId.id, managerId.id]
+        // );
       }
     });
 }
 
-async function viewRoles(db) {
-  const results = await db.query(`SELECT role.id AS ID,
+async function viewRoles() {
+  const results = await connection.query(`SELECT role.id AS ID,
     role.title AS "Job Title", 
     department.name AS Department,
     role.salary AS Salary  
@@ -89,8 +132,8 @@ async function viewRoles(db) {
   console.table(results);
 }
 
-async function addRole(db) {
-  let departmentData = await db.query(`SELECT id, name FROM department`);
+async function addRole() {
+  let departmentData = await connection.query(`SELECT id, name FROM department`);
   await inquirer
     .prompt([
       {
@@ -123,18 +166,18 @@ async function addRole(db) {
     ])
     .then(({ role, salary, department }) => {
       const departmentId = departmentData.find((x) => x.name === department);
-      db.query(
+      connection.query(
         `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`,
         [role, salary, departmentId.id]
       );
     });
 }
 
-async function updateEmployeeRole(db) {
-  let employeeData = await db.query(
+async function updateEmployeeRole() {
+  let employeeData = await connection.query(
     `SELECT id, CONCAT(first_name, " ", last_name) AS Employee FROM employee`
   );
-  let roleData = await db.query(`SELECT id, title FROM role`);
+  let roleData = await connection.query(`SELECT id, title FROM role`);
   await inquirer
     .prompt([
       {
@@ -153,18 +196,18 @@ async function updateEmployeeRole(db) {
     .then(({ employee, role }) => {
       const employeeId = employeeData.find((x) => x.Employee === employee);
       const roleId = roleData.find((x) => x.title === role);
-      db.query(
+      connection.query(
         `UPDATE employee SET role_id = ${roleId.id} WHERE id = ${employeeId.id}`
       );
     });
 }
 
-async function viewDept (db) {
-  const results = await db.query('SELECT department.id AS ID, name AS Department FROM department');
+async function viewDept () {
+  const results = await connection.query('SELECT department.id AS ID, name AS Department FROM department');
   console.table(results);
 }
 
-async function addDept (db) {
+async function addDept () {
   await inquirer
       .prompt(
           {
@@ -177,7 +220,7 @@ async function addDept (db) {
           }
       )
       .then(({ department }) => {
-          db.query(`INSERT INTO department (name) VALUES (?)`, [department])
+          connection.query(`INSERT INTO department (name) VALUES (?)`, [department])
       })
 }
 

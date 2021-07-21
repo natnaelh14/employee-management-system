@@ -230,6 +230,26 @@ async function deleteDept() {
     console.log("Deleted employee from the database");
   }
 
+  async function deleteRole() {
+    const roleQuery = await connection.query("SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;");
+    const roleLists = roleQuery.map(({ id, title }) => ({
+      name: title,
+      value: id
+    }));
+    const { roleId } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "roleId",
+        message:
+          "Which role do you want to remove?",
+        choices: roleLists
+      }
+    ]);
+    connection.query("DELETE FROM role WHERE id = ?", roleId);
+    console.log("Removed role from the database");
+  }
+
+
 module.exports = {
   viewEmployees,
   addEmployees,
@@ -239,5 +259,6 @@ module.exports = {
   viewDept,
   addDept,
   deleteDept,
-  deleteEmployee
+  deleteEmployee,
+  deleteRole
 };

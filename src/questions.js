@@ -204,12 +204,30 @@ async function deleteDept() {
       message:
         "Which department do you want to remove",
       choices: deptLists
-    });
-  
+    });  
     connection.query("DELETE FROM department WHERE id = ?", departmentId);
-  
     console.log(`Deleted selected department along with associated files from the database`);
+  }
 
+  async function deleteEmployee() {
+    const employeeQuery = await connection.query(
+      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;");
+  
+    const employeeLists = employeeQuery.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id
+    }));
+  
+    const { employeeId } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee do you want to remove?",
+        choices: employeeLists
+      }
+    ]);
+    connection.query("DELETE FROM employee WHERE id = ?", employeeId);
+    console.log("Deleted employee from the database");
   }
 
 module.exports = {
@@ -220,5 +238,6 @@ module.exports = {
   updateEmployeeRole,
   viewDept,
   addDept,
-  deleteDept
+  deleteDept,
+  deleteEmployee
 };

@@ -1,4 +1,4 @@
-const { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept, deleteDept } = require('./questions');
+const { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept, deleteDept, deleteEmployee } = require('./questions');
 
 const inquirer = require('inquirer');
 const display = require('console.table');
@@ -11,7 +11,7 @@ const display = require('console.table');
                     name: 'mainMenu',
                     type: 'list',
                     message: 'What would you like to do?',
-                    choices: ['View all employees', 'Add an employee', 'View all roles', 'Add a role', 'Update an employee role', 'View all departments', 'Add a department', 'Remove Employee', 'Quit application']
+                    choices: ['View all employees', 'Add an employee', 'View all roles', 'Add a role', 'Update an employee role', 'View all departments', 'Add a department', 'Remove Department', 'Remove Employee', 'Quit application']
                 }
             );
         switch (mainMenu) {
@@ -42,8 +42,12 @@ const display = require('console.table');
             case 'Add a department':
                 await addDept();
                 break;
-            case 'Remove Employee':
+            case 'Remove Department':
                 await deleteDept();
+                optionList();
+                break;
+            case 'Remove Employee':
+                await deleteEmployee();
                 optionList();
                 break;
             case 'Quit application':

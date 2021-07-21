@@ -203,10 +203,11 @@ async function updateEmployeeRole() {
 }
 
 async function viewDept () {
-  const results = await connection.query('SELECT department.id AS ID, name AS Department FROM department');
+  const results =  this.connection.query('SELECT department.id AS ID, name AS Department FROM department');
   console.table(results);
 }
 
+//created a new department
 async function addDept () {
   await inquirer
       .prompt(
@@ -220,7 +221,7 @@ async function addDept () {
           }
       )
       .then(({ department }) => {
-          connection.query(`INSERT INTO department (name) VALUES (?)`, [department])
+          this.connection.query(`INSERT INTO department (name) VALUES (?)`, [department])
       })
 }
 

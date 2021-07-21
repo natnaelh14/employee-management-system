@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
 
   user: 'root',
 
-  password: 'Fiyorina#22',
+  password: '',
   database: 'hospital_DB',
 });
 

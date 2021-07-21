@@ -11,7 +11,7 @@ const display = require('console.table');
                     name: 'mainMenu',
                     type: 'list',
                     message: 'What would you like to do?',
-                    choices: ['View all employees', 'Add an employee', 'View all roles', 'Add a role', 'Update an employee role', 'View all departments', 'Add a department', 'Remove Department', 'Remove Employee', 'Remove Role', 'Quit application']
+                    choices: ['View all employees', 'View all roles', 'View all departments', 'Add an employee', 'Add a role', 'Add a department', 'Update an employee role', 'Remove Employee', 'Remove Role', 'Remove Department', 'Quit application']
                 }
             );
         switch (mainMenu) {
@@ -55,8 +55,8 @@ const display = require('console.table');
                 optionList();
                 break;
             case 'Quit application':
-                await db.close();
-                return;
+                console.log('exiting...')
+                process.exit();
         }
     }
 

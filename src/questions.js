@@ -25,7 +25,7 @@ const viewEmployees = async () => {
     INNER JOIN department ON department.id = role.department_id
     LEFT JOIN employee e ON employee.manager_id = e.id
     ORDER BY ID ASC`;
-    await connection.query(sql, (error, results, fields) => {
+    connection.query(sql, (error, results, fields) => {
       if (error) {
         return console.error(error.message);
       }
@@ -132,6 +132,7 @@ async function viewRoles() {
   console.table(results);
 }
 
+//Create a Role
 async function addRole() {
   let departmentData = await connection.query(`SELECT id, name FROM department`);
   await inquirer
@@ -170,9 +171,11 @@ async function addRole() {
         `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`,
         [role, salary, departmentId.id]
       );
+      console.log(`Added ${role} to the database`)
     });
 }
 
+//Update an employee's role
 async function updateEmployeeRole() {
   let employeeData = await connection.query(
     `SELECT id, CONCAT(first_name, " ", last_name) AS Employee FROM employee`
@@ -199,6 +202,7 @@ async function updateEmployeeRole() {
       connection.query(
         `UPDATE employee SET role_id = ${roleId.id} WHERE id = ${employeeId.id}`
       );
+      console.log(`updated ${employee}\'s role to ${role}`)
     });
 }
 

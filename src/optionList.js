@@ -26,9 +26,11 @@ const display = require('console.table');
                 break;
             case 'Add a role':
                 await addRole();
+                optionList();
                 break;
             case 'Update an employee role':
                 await updateEmployeeRole();
+                optionList();
                 break;
             case 'View all departments':
                 await viewDept();

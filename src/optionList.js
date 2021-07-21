@@ -17,9 +17,11 @@ const display = require('console.table');
         switch (mainMenu) {
             case 'View all employees':
                 await viewEmployees();
+                optionList();
                 break;
             case 'Add an employee':
                 await addEmployees();
+                optionList();
                 break;
             case 'View all roles':
                 await viewRoles();

@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const connection = require("../Database");
+require("console.table");
 
 const checkString = (input) => {
   if (input !== undefined && typeof input === "string") {
@@ -12,22 +13,12 @@ const checkString = (input) => {
 
 const viewEmployees = async () => {
   console.log("Viewing employee by departments");
-  let sql = `SELECT employee.id AS ID,
-    employee.first_name AS "First Name",
-    employee.last_name AS "Last Name", 
-    role.title AS "Job Title",
-    department.name AS Department,
-    role.salary AS Salary, 
-    CONCAT(e.first_name, " ", e.last_name) AS Manager 
-    FROM employee INNER JOIN role ON role.id = employee.role_id 
-    INNER JOIN department ON department.id = role.department_id
-    LEFT JOIN employee e ON employee.manager_id = e.id
-    ORDER BY ID ASC`;
+  let sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`;
   connection.query(sql, (error, results, fields) => {
     if (error) {
       return console.error(error.message);
     }
-    console.log(results);
+    console.table(results);
   });
 };
 

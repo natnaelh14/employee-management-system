@@ -10,7 +10,7 @@ const display = require('console.table');
                 {
                     name: 'mainMenu',
                     type: 'list',
-                    message: 'MAIN MENU',
+                    message: 'What would you like to do?',
                     choices: ['View all employees', 'Add an employee', 'View all roles', 'Add a role', 'Update an employee role', 'View all departments', 'Add a department', 'Quit application']
                 }
             );
@@ -34,6 +34,7 @@ const display = require('console.table');
                 break;
             case 'View all departments':
                 await viewDept();
+                optionList();
                 break;
             case 'Add a department':
                 await addDept();

@@ -207,7 +207,9 @@ async function updateEmployeeRole() {
 }
 
 async function viewDept () {
-  const results =  this.connection.query('SELECT department.id AS ID, name AS Department FROM department');
+  const results =  await connection.query('SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id LEFT JOIN employee ON employee.role_id = role.id GROUP BY department.id, department.name');
+  console.log('Here is the list of all the departments.')
+  console.log("\n");
   console.table(results);
 }
 

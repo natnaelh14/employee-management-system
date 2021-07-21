@@ -177,18 +177,40 @@ async function addDept() {
     .prompt({
       name: "department",
       type: "input",
-      message: "Please enter the name of the new DEPARTMENT:",
+      message: "What is the name of the department",
       validate: (department) => {
         return checkString(department);
-      },
+      }
     })
+    console.log('department', department)
     .then(({ department }) => {
-      connection.query(`INSERT INTO department (name) VALUES (?)`, [
-        department,
-      ]);
+      connection.query("INSERT INTO department SET ?", department);
     });
-  console.log(`Added ${department} to the database`);
+    console.log(`Added ${department} department to the database`);
 }
+
+async function deleteDept() {
+  const departmentQuery = await connection.query(
+    "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id LEFT JOIN employee ON employee.role_id = role.id GROUP BY department.id, department.name")
+
+    const deptLists = departmentQuery.map(({ id, name }) => ({
+      name: name,
+      value: id
+    }));
+  
+    const { departmentId } = await inquirer.prompt({
+      type: "list",
+      name: "departmentId",
+      message:
+        "Which department do you want to remove",
+      choices: deptLists
+    });
+  
+    connection.query("DELETE FROM department WHERE id = ?", departmentId);
+  
+    console.log(`Deleted selected department along with associated files from the database`);
+
+  }
 
 module.exports = {
   viewEmployees,
@@ -198,4 +220,5 @@ module.exports = {
   updateEmployeeRole,
   viewDept,
   addDept,
+  deleteDept
 };

@@ -25,7 +25,7 @@ const viewEmployees = async () => {
     INNER JOIN department ON department.id = role.department_id
     LEFT JOIN employee e ON employee.manager_id = e.id
     ORDER BY ID ASC`;
-    connection.query(sql, (error, results, fields) => {
+    await connection.query(sql, (error, results, fields) => {
       if (error) {
         return console.error(error.message);
       }

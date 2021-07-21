@@ -41,6 +41,7 @@ const display = require('console.table');
                 break;
             case 'Add a department':
                 await addDept();
+                optionList();
                 break;
             case 'Remove Department':
                 await deleteDept();

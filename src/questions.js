@@ -181,12 +181,12 @@ async function addDept() {
       validate: (department) => {
         return checkString(department);
       }
-    })
-    console.log('department', department)
-    .then(({ department }) => {
-      connection.query("INSERT INTO department SET ?", department);
+    }).then(({ department }) => {
+      connection.query("INSERT INTO department (name) VALUES (?)", department);
+      console.log(`Added ${department} department to the database`);
+    }).catch(err => {
+      console.log(err);
     });
-    console.log(`Added ${department} department to the database`);
 }
 
 async function deleteDept() {

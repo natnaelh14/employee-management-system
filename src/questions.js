@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const connection = require('../Database');
+const connection = require("../Database");
 
 const checkString = (input) => {
   if (input !== undefined && typeof input === "string") {
@@ -10,10 +10,8 @@ const checkString = (input) => {
   }
 };
 
-
-
 const viewEmployees = async () => {
-  console.log('Viewing employee by departments');
+  console.log("Viewing employee by departments");
   let sql = `SELECT employee.id AS ID,
     employee.first_name AS "First Name",
     employee.last_name AS "Last Name", 
@@ -25,12 +23,12 @@ const viewEmployees = async () => {
     INNER JOIN department ON department.id = role.department_id
     LEFT JOIN employee e ON employee.manager_id = e.id
     ORDER BY ID ASC`;
-    connection.query(sql, (error, results, fields) => {
-      if (error) {
-        return console.error(error.message);
-      }
-      console.log(results);
-    });
+  connection.query(sql, (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    console.log(results);
+  });
 };
 
 async function addEmployees() {
@@ -96,7 +94,9 @@ async function addEmployees() {
     .then(({ firstName, lastName, role, manager }) => {
       const roleId = roleData.find((x) => x.title === role);
       if (manager === "None") {
-        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${roleId.id},${null})`
+        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${
+          roleId.id
+        },${null})`;
         connection.query(insertCommand, (error, results, fields) => {
           if (error) {
             return console.error(error.message);
@@ -108,7 +108,7 @@ async function addEmployees() {
         // );
       } else {
         const managerId = managerData.find((x) => x.Manager === manager);
-        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${roleId.id},${managerId.id})`
+        const insertCommand = `INSERT INTO employee (first-name, last_name, role_id, manager_id) VALUES (${firstName},${lastName},${roleId.id},${managerId.id})`;
         connection.query(insertCommand, (error, results, fields) => {
           if (error) {
             return console.error(error.message);
@@ -123,18 +123,22 @@ async function addEmployees() {
 }
 
 async function viewRoles() {
-  const results = await connection.query(`SELECT role.id AS ID,
-    role.title AS "Job Title", 
-    department.name AS Department,
-    role.salary AS Salary  
+  const results = await connection.query(`SELECT role.id AS id,
+    role.title AS "title", 
+    department.name AS department,
+    role.salary AS salary  
     FROM role RIGHT JOIN department ON role.department_id = department.id
     ORDER BY ID ASC`);
+  console.log('Here is a list of all the roles')
+  console.log("\n");
   console.table(results);
 }
 
 //Create a Role
 async function addRole() {
-  let departmentData = await connection.query(`SELECT id, name FROM department`);
+  let departmentData = await connection.query(
+    `SELECT id, name FROM department`
+  );
   await inquirer
     .prompt([
       {
@@ -171,7 +175,7 @@ async function addRole() {
         `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`,
         [role, salary, departmentId.id]
       );
-      console.log(`Added ${role} to the database`)
+      console.log(`Added ${role} to the database`);
     });
 }
 
@@ -202,34 +206,43 @@ async function updateEmployeeRole() {
       connection.query(
         `UPDATE employee SET role_id = ${roleId.id} WHERE id = ${employeeId.id}`
       );
-      console.log(`updated ${employee}\'s role to ${role}`)
+      console.log(`updated ${employee}\'s role to ${role}`);
     });
 }
 
-async function viewDept () {
-  const results =  await connection.query('SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id LEFT JOIN employee ON employee.role_id = role.id GROUP BY department.id, department.name');
-  console.log('Here is the list of all the departments.')
+//View all the Departments
+async function viewDept() {
+  const results = await connection.query(
+    "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id LEFT JOIN employee ON employee.role_id = role.id GROUP BY department.id, department.name"
+  );
+  console.log("Here is the list of all the departments.");
   console.log("\n");
   console.table(results);
 }
 
 //created a new department
-async function addDept () {
+async function addDept() {
   await inquirer
-      .prompt(
-          {
-              name: 'department',
-              type: 'input',
-              message: 'Please enter the name of the new DEPARTMENT:',
-              validate: department => {
-                  return checkString(department)
-              }
-          }
-      )
-      .then(({ department }) => {
-          this.connection.query(`INSERT INTO department (name) VALUES (?)`, [department])
-      })
+    .prompt({
+      name: "department",
+      type: "input",
+      message: "Please enter the name of the new DEPARTMENT:",
+      validate: (department) => {
+        return checkString(department);
+      },
+    })
+    .then(({ department }) => {
+    connection.query(`INSERT INTO department (name) VALUES (?)`, [department]);
+    });
+    console.log(`Added ${department} to the database`);
 }
 
-module.exports = { viewEmployees, addEmployees, viewRoles, addRole, updateEmployeeRole, viewDept, addDept };
-
+module.exports = {
+  viewEmployees,
+  addEmployees,
+  viewRoles,
+  addRole,
+  updateEmployeeRole,
+  viewDept,
+  addDept,
+};

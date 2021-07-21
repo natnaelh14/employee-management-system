@@ -23,6 +23,7 @@ const display = require('console.table');
                 break;
             case 'View all roles':
                 await viewRoles();
+                optionList();
                 break;
             case 'Add a role':
                 await addRole();
@@ -38,6 +39,7 @@ const display = require('console.table');
                 break;
             case 'Add a department':
                 await addDept();
+                optionList();
                 break;
             case 'Quit application':
                 await db.close();

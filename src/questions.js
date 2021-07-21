@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const connection = require("../Database");
 require("console.table");
 
+//validate prompt input
 const checkString = (input) => {
   if (input !== undefined && typeof input === "string") {
     return true;
@@ -10,7 +11,7 @@ const checkString = (input) => {
     return false;
   }
 };
-
+//View Employee
 const viewEmployees = async () => {
   let sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`;
   connection.query(sql, (error, results, fields) => {
@@ -23,7 +24,7 @@ const viewEmployees = async () => {
   });
 };
 
-//Added Employee
+//Add an Employee
 async function addEmployees() {
   const selectRoleQuery = await connection.query(`SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id`);
   const selectEmployeeQuery = await connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id`);
@@ -109,7 +110,7 @@ async function addRole() {
             return true;
           } else {
             console.log(" Please enter a valid integer.");
-            return false;
+            return;
           }
         },
       },
@@ -171,7 +172,7 @@ async function viewDept() {
   console.table(results);
 }
 
-//created a new department
+//create a new department
 async function addDept() {
   await inquirer
     .prompt({
@@ -189,6 +190,7 @@ async function addDept() {
     });
 }
 
+//delete a department
 async function deleteDept() {
   const departmentQuery = await connection.query(
     "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM department LEFT JOIN role ON role.department_id = department.id LEFT JOIN employee ON employee.role_id = role.id GROUP BY department.id, department.name")
@@ -209,6 +211,7 @@ async function deleteDept() {
     console.log(`Deleted selected department along with associated files from the database`);
   }
 
+  //delete an employee
   async function deleteEmployee() {
     const employeeQuery = await connection.query(
       "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;");
@@ -230,6 +233,7 @@ async function deleteDept() {
     console.log("Deleted employee from the database");
   }
 
+  //delete a role
   async function deleteRole() {
     const roleQuery = await connection.query("SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;");
     const roleLists = roleQuery.map(({ id, title }) => ({

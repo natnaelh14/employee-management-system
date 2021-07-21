@@ -1,33 +1,33 @@
 INSERT INTO department (name)
 VALUES
-('Legal'),
-('Marketing'),
-('Human Resource'),
-('Accounting and Finance'),
+('Provider'),
+('Nursing'),
+('Respiratory'),
+('Pharmacy'),
 ('IT');
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-('Lawyer', 90000, 1),
-('Marketer', 70000, 2),
-('Marketing Analyst', 70000, 2),
-('Talent Management', 70000, 3),
-('Recruiter', 60000, 3),
-('Accountant', 80000, 4),
-('Computer Engineer', 100000, 5);
+('Internist', 200000, 1),
+('Cardiologies', 300000, 1),
+('Registered Nurse', 70000, 2),
+('Nurse Practitioner', 100000, 2),
+('Respiratory Therapist', 70000, 3),
+('Pharmacist', 120000, 4),
+('IT Specialist', 100000, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
- ('Alex', 'Briar', 1, NULL),
- ('Cindy', 'DePaul', 2, NULL),
- ('Elizabeth', 'LaFleur', 3, NULL),
- ('Giorno', 'Hyde', 4, NULL),
- ('Ibrahim', 'Jamac', 5, NULL);
+ ('John', 'Tyler', 1, 1),
+ ('James', 'Polk', 2, 2),
+ ('Zachary', 'Taylor', 3, 3),
+ ('Millard', 'Fillmore', 4, 4),
+ ('Franklin', 'Pierce', 5, 5);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
- ('Killroy', 'Landers', 1, 1),
- ('Miles', 'Nancy', 2, 2),
- ('Oliviere', 'Prapor', 3, 3),
- ('Quincy', 'Rawls', 4, 4),
- ('Stephanie', 'Ula', 5, 5);
+ ('Andrew', 'Johnson', 1, 1),
+ ('Ulysses', 'Grant', 2, 2),
+ ('James', 'Garfield', 3, 3),
+ ('Chester', 'Arthur', 4, 4),
+ ('Grover', 'Clevaland', 5, 5);
